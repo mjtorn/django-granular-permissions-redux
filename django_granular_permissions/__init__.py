@@ -1,4 +1,4 @@
-from django.contrib.auth.models import User, Group
+from django.contrib.auth.models import User, Group, AnonymousUser
 from django.contrib.contenttypes.models import ContentType
 from django.db.models import Q
 from models import Permission
@@ -65,7 +65,16 @@ class User(MetaObject):
         objects = Permission.objects.filter(Q(user=self) | Q(group__in=self.groups.all()), content_type__pk=content_type.id, name=perm)
         return objects
         
-            
+class AnonymousUser(MetaObject):
+    def add_row_perm(self, instance, perm):
+        return False
+    def del_row_perm(self, instance, perm):
+        return False
+    def has_row_perm(self, instance, perm, only_me=False):
+        return False
+    def get_rows_with_permission(self, instance, perm):
+        return Permission.objects.none()
+
 class Group(MetaObject):
     def add_row_perm(self, instance, perm):
         if self.has_row_perm(instance, perm):
@@ -95,6 +104,6 @@ class Group(MetaObject):
             
     def get_rows_with_permission(self, instance, perm):
         content_type = ContentType.objects.get_for_model(instance)
-        objects = Permission.objects.filter(group=self, content_type__pk=contet_type.id, name=perm)
+        objects = Permission.objects.filter(group=self, content_type__pk=content_type.id, name=perm)
         return objects
         
