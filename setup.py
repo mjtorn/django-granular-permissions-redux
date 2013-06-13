@@ -8,6 +8,6 @@ setup(name='django-granular-permissions',
       author='Bartosz Ptaszynski',
       author_email='yazzgoth@gmail.com',
       url='http://code.google.com/p/django-granular-permissions/',
-      packages=['django_granular_permissions'],
+      packages=['django_granular_permissions', 'django_granular_permissions.migrations'],
  )
 
